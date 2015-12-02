@@ -14,7 +14,6 @@ namespace ShortUrl.Data.Models
         public String Key { get; set; }
 
         [Required]
-        [Index(IsUnique = true)]
         public String Url { get; set; }
 
         public DateTime DateCreated { get; set; }
