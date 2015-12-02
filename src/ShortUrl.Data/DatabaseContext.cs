@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace ShortUrl.Data
 {
-    public class Context: DbContext
+    internal class DatabaseContext: DbContext
     {
-        public Context() : base("ShortUrl")
+        public DatabaseContext() : base("ShortUrl")
         {
-            Database.SetInitializer<Context>(new CreateDatabaseIfNotExists<Context>());
+            Database.SetInitializer<DatabaseContext>(new CreateDatabaseIfNotExists<DatabaseContext>());
         }
 
         public DbSet<Models.ShortUrl> ShortUrls { get; set; }

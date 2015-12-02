@@ -31,19 +31,4 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 4
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://dejanstojanovic.visualstudio.com/defaultcollection
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = ShortUrl.Data\\ShortUrl.Data.csproj
-		SccProjectName1 = ShortUrl.Data
-		SccLocalPath1 = ShortUrl.Data
-		SccProjectUniqueName2 = ShortUrl.UrlLogic\\ShortUrl.Logic.csproj
-		SccProjectName2 = ShortUrl.UrlLogic
-		SccLocalPath2 = ShortUrl.UrlLogic
-		SccProjectUniqueName3 = ShortUrl.Web\\ShortUrl.Web.csproj
-		SccProjectName3 = ShortUrl.Web
-		SccLocalPath3 = ShortUrl.Web
-	EndGlobalSection
 EndGlobal

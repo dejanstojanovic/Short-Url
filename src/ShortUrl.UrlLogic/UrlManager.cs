@@ -13,12 +13,12 @@ namespace ShortUrl.Logic
 {
     public class UrlManager:IDisposable
     {
-        private ShortUrl.Data.Context dbContext;
+        private ShortUrl.Data.IRepository<ShortUrl.Data.Models.ShortUrl> dataRepository;
         private bool disposing = false;
         
         public UrlManager()
         {
-            dbContext = new Data.Context();
+            dataRepository = new Data.UrlRepository();
         }
 
         public String AddShortUrl(string Url)
@@ -50,15 +50,14 @@ namespace ShortUrl.Logic
                 String newKey = null;
                 while (string.IsNullOrEmpty(newKey))
                 {
-                    if (!dbContext.ShortUrls.Any(s => s.Url == Url))
+                    if (!dataRepository.Exists(Url))
                     {
                         newKey = Guid.NewGuid().ToString("N").Substring(0, ConfigManager.KeyLength).ToLower();
-                        dbContext.ShortUrls.Add(new Data.Models.ShortUrl() { Key = newKey, Url = Url, DateCreated = DateTime.Now });
-                        dbContext.SaveChanges();
+                       dataRepository.Add(new Data.Models.ShortUrl() { Key = newKey, Url = Url, DateCreated = DateTime.Now });
                     }
                     else
                     {
-                        var shortUrl = dbContext.ShortUrls.Where(s => s.Url == Url).FirstOrDefault();
+                        var shortUrl = dataRepository.Find(Url);
                         if (shortUrl != null)
                         {
                             newKey = shortUrl.Key;
@@ -77,7 +76,7 @@ namespace ShortUrl.Logic
 
         public String GetUrl(String ShortUrlKey)
         {
-            var url = dbContext.ShortUrls.Where(s => s.Key == ShortUrlKey).FirstOrDefault();
+            var url = dataRepository.Find(ShortUrlKey);
             if (url != null)
             {
                 return url.Url;
@@ -122,9 +121,9 @@ namespace ShortUrl.Logic
             if (!disposing)
             {
                 disposing = true;
-                if (this.dbContext != null)
+                if (this.dataRepository != null)
                 {
-                    this.dbContext.Dispose();
+                    this.dataRepository.Dispose();
                 }
             }
         }
