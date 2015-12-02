@@ -15,57 +15,7 @@ namespace ShortUrl.Logic
     {
         private ShortUrl.Data.Context dbContext;
 
-        private bool CheckUrlAvailability
-        {
-            get
-            {
-                bool check;
-                if(!bool.TryParse(ConfigurationManager.AppSettings["CheckUrlAvailability"], out check))
-                {
-                    check = false;
-                }
-                return check;
-            }
-        }
 
-        private int CheckUrlAvailabilityTimeout
-        {
-            get
-            {
-                int timeout;
-                if (!int.TryParse(ConfigurationManager.AppSettings["CheckUrlAvailabilityTimeout"], out timeout))
-                {
-                    timeout = 5;
-                }
-                return timeout;
-            }
-        }
-
-        private int KeyLength
-        {
-            get
-            {
-                int keyLength;
-               if( !int.TryParse(ConfigurationManager.AppSettings["KeyLength"], out keyLength))
-                {
-                    keyLength = 6;
-                }
-                return keyLength;
-            }
-        }
-
-        private int CacheTimeout
-        {
-            get
-            {
-                int cacheTimeout;
-                if(!int.TryParse(ConfigurationManager.AppSettings["CaheTimeout"], out cacheTimeout))
-                {
-                    cacheTimeout = 5;
-                }
-                return cacheTimeout;
-            }
-        }
 
         public UrlManager()
         {
@@ -80,7 +30,7 @@ namespace ShortUrl.Logic
             }
 
             String cached = null;
-            cached = this.GetCached<String>(Url);
+            cached = CacheManager.GetCached<String>(Url);
             if (!String.IsNullOrWhiteSpace(cached))
             {
                 return cached;
@@ -95,7 +45,7 @@ namespace ShortUrl.Logic
                 throw new Exceptions.InvalidUrlException(ex);
             }
 
-            if ((this.CheckUrlAvailability && this.HttpGetStatusCode(Url).Result == HttpStatusCode.OK) || !this.CheckUrlAvailability)
+            if ((ConfigManager.CheckUrlAvailability && this.HttpGetStatusCode(Url).Result == HttpStatusCode.OK) || !ConfigManager.CheckUrlAvailability)
             {
 
                 String newKey = null;
@@ -103,7 +53,7 @@ namespace ShortUrl.Logic
                 {
                     if (!dbContext.ShortUrls.Any(s => s.Url == Url))
                     {
-                        newKey = Guid.NewGuid().ToString("N").Substring(0, this.KeyLength).ToLower();
+                        newKey = Guid.NewGuid().ToString("N").Substring(0, ConfigManager.KeyLength).ToLower();
                         dbContext.ShortUrls.Add(new Data.Models.ShortUrl() { Key = newKey, Url = Url, DateCreated = DateTime.Now });
                         dbContext.SaveChanges();
                     }
@@ -116,7 +66,7 @@ namespace ShortUrl.Logic
                         }
                     }
                 }
-                this.TryAddToCache<String>(Url, newKey);
+                CacheManager.TryAddToCache<String>(Url, newKey);
 
                 return newKey;
             }
@@ -144,7 +94,7 @@ namespace ShortUrl.Logic
             try
             {
                 var httpclient = new HttpClient();
-                httpclient.Timeout = TimeSpan.FromSeconds(this.CacheTimeout);
+                httpclient.Timeout = TimeSpan.FromSeconds(ConfigManager.CacheTimeout);
                 var response = await httpclient.GetAsync(Url, HttpCompletionOption.ResponseHeadersRead);
 
                 string text = null;
@@ -168,27 +118,6 @@ namespace ShortUrl.Logic
             }
         }
 
-        private T GetCached<T>(string cacheKey) where T : class
-        {
-            HttpContext httpContext = HttpContext.Current;
-            if (httpContext != null)
-            {
-                return HttpContext.Current.Cache[cacheKey] as T;
-            }
-            return null;
-        }
-
-        private  bool TryAddToCache<T>(string cacheKey, T value, int timeout = 0)
-        {
-            HttpContext httpContext = HttpContext.Current;
-            if (httpContext != null)
-            {
-                //httpContext.Cache.Add(cacheKey, value, null, DateTime.Now.AddMinutes(cacheTimeout), Cache.NoSlidingExpiration, CacheItemPriority.Normal, null);
-                httpContext.Cache.Insert(cacheKey, value, null, Cache.NoAbsoluteExpiration, TimeSpan.FromMinutes(this.CacheTimeout));
-
-            }
-            return false;
-        }
 
     }
 }
