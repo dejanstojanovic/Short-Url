@@ -55,6 +55,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CacheManager.cs" />
+    <Compile Include="ConfigManager.cs" />
     <Compile Include="Exceptions\InvalidUrlException.cs" />
     <Compile Include="Exceptions\MissingKeyException.cs" />
     <Compile Include="Exceptions\UrlUnreachableException.cs" />
