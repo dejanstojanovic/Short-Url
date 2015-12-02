@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,9 @@ namespace ShortUrl.Data.Models
     {
         [Key]
         public String Key { get; set; }
+
         [Required]
+        [Index(IsUnique = true)]
         public String Url { get; set; }
 
         public DateTime DateCreated { get; set; }
