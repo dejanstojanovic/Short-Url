@@ -45,14 +45,14 @@ namespace ShortUrl.Logic
                 String newKey = null;
                 while (string.IsNullOrEmpty(newKey))
                 {
-                    if (!dataRepository.Exists(Url))
+                    if (!dataRepository.ExistsUrl(Url))
                     {
-                        newKey = Guid.NewGuid().ToString("N").Substring(0, ConfigManager.KeyLength).ToLower();
+                       newKey = Guid.NewGuid().ToString("N").Substring(0, ConfigManager.KeyLength).ToLower();
                        dataRepository.Add(new Data.Models.ShortUrl() { Key = newKey, Url = Url, DateCreated = DateTime.Now });
                     }
                     else
                     {
-                        var shortUrl = dataRepository.Find(Url);
+                        var shortUrl = dataRepository.FindUrl(Url);
                         if (shortUrl != null)
                         {
                             newKey = shortUrl.Key;
@@ -71,7 +71,7 @@ namespace ShortUrl.Logic
 
         public String GetUrl(String ShortUrlKey)
         {
-            var url = dataRepository.Find(ShortUrlKey);
+            var url = dataRepository.FindKey(ShortUrlKey);
             if (url != null)
             {
                 return url.Url;

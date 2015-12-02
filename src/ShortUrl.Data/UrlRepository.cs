@@ -18,14 +18,24 @@ namespace ShortUrl.Data
             return result;
         }
 
-        public bool Exists(string url)
+        public bool ExistsUrl(string url)
         {
           return   dbContext.ShortUrls.Any(u => u.Url == url);
         }
 
-        public Models.ShortUrl Find(string key)
+        public bool ExistsKey(string key)
+        {
+            return dbContext.ShortUrls.Any(u => u.Key == key);
+        }
+
+        public Models.ShortUrl FindKey(string key)
         {
           return  dbContext.ShortUrls.Where(u => u.Key == key).FirstOrDefault();
+        }
+
+        public Models.ShortUrl FindUrl(string url)
+        {
+            return dbContext.ShortUrls.Where(u => u.Url == url).FirstOrDefault();
         }
 
         public void Dispose()
