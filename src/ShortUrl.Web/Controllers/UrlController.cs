@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShortUrl.Logic;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -13,12 +14,14 @@ namespace ShortUrl.Web.Controllers
         [Route("{key}")]
         public HttpResponseMessage Get(string key)
         {
-            var response = Request.CreateResponse(HttpStatusCode.Moved);
-            String urlString = new ShortUrl.Logic.UrlManager().GetUrl(key);
-            if (!String.IsNullOrWhiteSpace(urlString))
-            {
-                response.Headers.Location = new Uri(urlString);
-                return response;
+            using (UrlManager urlManager = new UrlManager()) {
+                var response = Request.CreateResponse(HttpStatusCode.Moved);
+                String urlString = urlManager.GetUrl(key);
+                if (!String.IsNullOrWhiteSpace(urlString))
+                {
+                    response.Headers.Location = new Uri(urlString);
+                    return response;
+                }
             }
             return null;
         }
@@ -27,8 +30,10 @@ namespace ShortUrl.Web.Controllers
         [Route("short")]
         public HttpResponseMessage Post([FromBody] String url)
         {
-                return Request.CreateResponse(HttpStatusCode.OK, new ShortUrl.Logic.UrlManager().AddShortUrl(url));
-            
+            using (UrlManager urlManager = new UrlManager())
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, urlManager.AddShortUrl(url));
+            }
         }
     }
 }

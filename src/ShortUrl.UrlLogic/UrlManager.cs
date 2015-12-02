@@ -11,12 +11,11 @@ using System.Net.Http;
 
 namespace ShortUrl.Logic
 {
-    public class UrlManager
+    public class UrlManager:IDisposable
     {
         private ShortUrl.Data.Context dbContext;
-
-
-
+        private bool disposing = false;
+        
         public UrlManager()
         {
             dbContext = new Data.Context();
@@ -118,6 +117,16 @@ namespace ShortUrl.Logic
             }
         }
 
-
+        public void Dispose()
+        {
+            if (!disposing)
+            {
+                disposing = true;
+                if (this.dbContext != null)
+                {
+                    this.dbContext.Dispose();
+                }
+            }
+        }
     }
 }
