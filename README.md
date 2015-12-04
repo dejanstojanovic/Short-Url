@@ -41,3 +41,25 @@ Host: localhost:37626
 Content-Type: application/json
 Cache-Control: no-cache
 ```
+
+##Settings
+
+Service settings consists of just few web.config key values in appSeetings sections. They are controlling behaviour of URL shortening web service.
+
+| Name  		 					| Default value 	| Description				 	|
+| --------------------------------- | ----------------- | ------------------------------|
+| **CheckUrlAvailability**			| False				| Check if URL is available (returns 200 OK response) before adding to database							|
+| **CheckUrlAvailabilityTimeout**	| 5					| How many seconds to wait for a response when checking URL availability						|
+| **KeyLength**						| 6					| Character length of short URL key for added URLs								|
+| **CacheTimeout**					| 5					| How many minutes to keep key and URL after last request								|
+
+```xml
+<configuration>
+  <appSettings>
+    <add key="CheckUrlAvailability" value="False"/>
+    <add key="CheckUrlAvailabilityTimeout" value="5"/>
+    <add key="KeyLength" value="6"/>
+    <add key="CacheTimeout" value="5"/>
+  </appSettings>
+</configuration>
+```
